@@ -2,7 +2,7 @@
 
 ## Full Stack Trivia
 
-Trivia is an Advanced quizzes to create a great bonding experiences between team members
+Trivia is an Advanced quizzes app to create a great bonding experience between team members
 
 ## Starting the app
 
