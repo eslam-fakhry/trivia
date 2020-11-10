@@ -4,6 +4,7 @@ import '../stylesheets/App.css';
 import Question from './Question';
 import Search from './Search';
 import $ from 'jquery';
+import { BASE_URL } from '../config'
 
 class QuestionView extends Component {
   constructor(){
@@ -22,8 +23,9 @@ class QuestionView extends Component {
   }
 
   getQuestions = () => {
+    console.log();
     $.ajax({
-      url: `/questions?page=${this.state.page}`, //TODO: update request URL
+      url: `${BASE_URL}/questions?page=${this.state.page}`, 
       type: "GET",
       success: (result) => {
         this.setState({
@@ -60,7 +62,7 @@ class QuestionView extends Component {
 
   getByCategory= (id) => {
     $.ajax({
-      url: `/categories/${id}/questions`, //TODO: update request URL
+      url: `${BASE_URL}/categories/${id}/questions`, 
       type: "GET",
       success: (result) => {
         this.setState({

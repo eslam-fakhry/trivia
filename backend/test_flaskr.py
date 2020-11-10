@@ -3,7 +3,7 @@ import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
 
-from flaskr import create_app
+from flaskr import create_app, QUESTIONS_PER_PAGE
 from models import setup_db, Question, Category, db
 
 
@@ -38,7 +38,7 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-
+    # get_categories 
     def test_get_categories(self):
         db.session.add(Category(type="Art"))
         db.session.add(Category(type="Sport"))
@@ -63,6 +63,65 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(result.status_code, 405)
 
+    # get_questions 
+    def test_get_questions(self):
+        db.session.add(Category(type="Art"))
+        db.session.add(Category(type="Sport"))
+        db.session.add(Question(
+            question="question1",
+            answer="answer1",
+            difficulty=1,
+            category="Sport"))
+        db.session.add(Question(
+            question="question2",
+            answer="answer2",
+            difficulty=2,
+            category="Art"))
+        db.session.commit()
+
+        result = self.client().get("/questions")
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(len(body['categories']), 2)
+        self.assertEqual(len(body['questions']), 2)
+        self.assertEqual(body['total_questions'], 2)
+        self.assertEqual(body['current_category'], None)
+
+    def test_questions_are_paginated(self):
+        db.session.add(Category(type="Art"))
+        for i in range(12):
+            db.session.add(Question(
+                question=f"question{i}",
+                answer="answer{i}",
+                difficulty=1,
+                category="Art"))
+        db.session.commit()
+
+        result = self.client().get("/questions")
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(len(body['questions']), QUESTIONS_PER_PAGE)
+        self.assertEqual(body['total_questions'], 12)
+
+    def test_get_empty_question_list_from_first_page(self):
+        result = self.client().get("/questions")
+
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(len(body['questions']), 0)
+
+    def test_get_404_from_second_page(self):
+        result = self.client().get("/questions?page=2")
+
+        self.assertEqual(result.status_code, 404)
+
+    def test_categories_errored_for_bad_method(self):
+        result = self.client().put("/questions")
+
+        self.assertEqual(result.status_code, 405)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
