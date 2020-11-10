@@ -201,6 +201,43 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(body['questions']), 0)
 
+    # get_category_questions
+    def test_get_questions_by_category(self):
+        category = Category(type="Art")
+        db.session.add(category)
+        db.session.add(Question(
+            question="question1",
+            answer="answer1",
+            difficulty=1,
+            category=1))
+        db.session.commit()
+
+        result = self.client().get(f"/categories/{category.id}/questions")
+
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(len(body['questions']), 1)
+        self.assertEqual(body['current_category'], "Art")
+
+    def test_get_questions_by_category_without_question(self):
+        category = Category(type="Art")
+        db.session.add(category)
+        db.session.commit()
+
+        result = self.client().get(f"/categories/{category.id}/questions")
+
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(len(body['questions']), 0)
+        self.assertEqual(body['current_category'], "Art")
+
+    def test_get_questions_by_category_not_found(self):
+        result = self.client().get(f"/categories/{1}/questions")
+
+        self.assertEqual(result.status_code, 404)
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

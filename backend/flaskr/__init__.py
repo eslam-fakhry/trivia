@@ -127,6 +127,17 @@ def create_app(test_config=None):
 
         abort(422)
 
+    @app.route('/categories/<int:category_id>/questions')
+    def get_category_questions(category_id):
+        category = Category.query.get_or_404(category_id)
+        questions = Question.query.filter_by(category=category_id).all()
+        formatted_questions = [q.format() for q in questions]
+        return jsonify({
+            "success": True,
+            "questions": formatted_questions,
+            "current_category": category.type,
+            "total_questions": len(formatted_questions)
+        })
 
   '''
   @TODO: 
