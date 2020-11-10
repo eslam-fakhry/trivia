@@ -11,7 +11,8 @@ from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
-TRIVIA_FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:3000")
+TRIVIA_FRONTEND_ORIGIN = os.environ.get(
+    "FRONTEND_ORIGIN", "http://localhost:3000")
 
 # helpers
 def get_dict_from_categories(categories):
@@ -19,6 +20,15 @@ def get_dict_from_categories(categories):
     return dict(((c.id, c.type) for c in categories))
 
 
+def create_custom_bad_request(field):
+    return jsonify({
+        "error": 400,
+        "success": False,
+        "message": f"Field: {field} is invalid"
+    }), 400
+
+
+# APP
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -113,11 +123,29 @@ def create_app(test_config=None):
                 "current_category": None
             })
 
+        question_input = data.get('question', None)
+        answer_input = data.get('answer', None)
+        category_input = data.get('category', None)
+        difficulty_input = data.get('difficulty', None)
+
+        # Validations
+        if not question_input:
+            return create_custom_bad_request("question")
+
+        if not answer_input:
+            return create_custom_bad_request("answer")
+
+        if not Category.query.get(category_input):
+            return create_custom_bad_request("category")
+
+        if (not difficulty_input) or (difficulty_input < 1) or (difficulty_input > 5):
+            return create_custom_bad_request("difficulty")
+
         question = Question(
-            question=data.get('question', None),
-            answer=data.get('answer', None),
-            category=data.get('category', None),
-            difficulty=data.get('difficulty', None),
+            question=question_input,
+            answer=answer_input,
+            category=category_input,
+            difficulty=difficulty_input,
         )
 
         try:

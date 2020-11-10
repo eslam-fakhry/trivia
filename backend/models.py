@@ -9,7 +9,6 @@ database_username = "postgres"
 database_name = "trivia_db"
 default_database_path = "postgresql://{}@{}/{}".format(
     database_username, 'localhost:5432', database_name)
-print(default_database_path)
 database_path =  os.environ.get("TRIVIA_DATABASE_URL",default_database_path)
 
 db = SQLAlchemy()
