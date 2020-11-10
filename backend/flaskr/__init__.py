@@ -2,6 +2,7 @@ import os
 import sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import not_, func
 from flask_cors import CORS
 import random
 
@@ -139,27 +140,37 @@ def create_app(test_config=None):
             "total_questions": len(formatted_questions)
         })
 
-  '''
-  @TODO: 
-  Create a GET endpoint to get questions based on category. 
+    @app.route('/quizzes', methods=["POST"])
+    def quizzes():
+        category = None
 
-  TEST: In the "List" tab / main screen, clicking on one of the 
-  categories in the left column will cause only questions of that 
-  category to be shown. 
-  '''
+        data = request.get_json()
 
+        quiz_category = data.get("quiz_category", None)
+        previous_questions = data.get("previous_questions", [])
+        if not quiz_category:
+            abort(400)
 
-  '''
-  @TODO: 
-  Create a POST endpoint to get questions to play the quiz. 
-  This endpoint should take category and previous question parameters 
-  and return a random questions within the given category, 
-  if provided, and that is not one of the previous questions. 
+        if quiz_category['type'] != "ALL":
+            category = Category.query.get_or_404(quiz_category['id'])
 
-  TEST: In the "Play" tab, after a user selects "All" or a category,
-  one question at a time is displayed, the user is allowed to answer
-  and shown whether they were correct or not. 
-  '''
+        query = Question.query
+        if category:
+            query = query.filter(Question.category == category.id)
+
+        # from https://stackoverflow.com/a/60815
+        query = query.filter(not_(Question.id.in_(previous_questions))) \
+            .order_by(func.random()).limit(1)
+
+        question = query.first()
+
+        if question:
+            question = question.format()
+
+        return jsonify({
+            "success": True,
+            "question":  question
+        })
 
     @app.errorhandler(404)
     def not_found(error):
@@ -178,4 +189,11 @@ def create_app(test_config=None):
             "message": "Request cannot be processed"
         }), 422
 
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            "error": 400,
+            "success": False,
+            "message": "Bad request"
+        }), 400
     return app

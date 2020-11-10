@@ -238,6 +238,100 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(result.status_code, 404)
 
+    # Quizzes
+    def test_get_random_questions_by_category(self):
+        category = Category(type="Art")
+        db.session.add(category)
+        question = Question(
+            question="question1",
+            answer="answer1",
+            difficulty=1,
+            category=1)
+        db.session.add(question)
+        db.session.commit()
+
+        result = self.client().post("/quizzes", json={
+            "previous_questions": [],
+            "quiz_category": {
+                "id": 1,
+                "type": "Art"
+            }
+        })
+
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertDictEqual(body['question'], {
+            'id': 1,
+            'question': 'question1',
+            'answer': 'answer1',
+            'difficulty': 1,
+            'category': 1,
+        })
+
+    def test_get_random_questions_by_category_with_no_new_questions(self):
+        category = Category(type="Art")
+        db.session.add(category)
+        question = Question(
+            question="question1",
+            answer="answer1",
+            difficulty=1,
+            category=1)
+        db.session.add(question)
+        db.session.commit()
+
+        result = self.client().post("/quizzes", json={
+            "previous_questions": [1],
+            "quiz_category": {
+                "id": 1,
+                "type": "Art"
+            }
+        })
+
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(body['question'], None)
+
+    def test_get_random_questions_for_all_categories(self):
+        db.session.add(Category(type="Art"))
+        db.session.add(Category(type="Science"))
+        db.session.add(Question(
+            question="question1",
+            answer="answer1",
+            difficulty=1,
+            category=1))
+        db.session.add(Question(
+            question="question2",
+            answer="answer2",
+            difficulty=1,
+            category=2))
+        db.session.commit()
+
+        result1 = self.client().post("/quizzes", json={
+            "previous_questions": [1],
+            "quiz_category": {
+                "id": None,
+                "type": "ALL"
+            }
+        })
+
+        self.assertEqual(result1.status_code, 200)
+
+        result2 = self.client().post("/quizzes", json={
+            "previous_questions": [1],
+            "quiz_category": {
+                "id": None,
+                "type": "ALL"
+            }
+        })
+
+        body = json.loads(result2.data)
+
+        self.assertEqual(result2.status_code, 200)
+        self.assertTrue(body['question'])
+
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
