@@ -84,16 +84,32 @@ def create_app(test_config=None):
 
         abort(422)
 
-  '''
-  @TODO: 
-  Create an endpoint to POST a new question, 
-  which will require the question and answer text, 
-  category, and difficulty score.
+    @app.route('/questions', methods=["POST"])
+    def create_question():
+        error = False
+        data = request.get_json()
 
-  TEST: When you submit a question on the "Add" tab, 
-  the form will clear and the question will appear at the end of the last page
-  of the questions list in the "List" tab.  
-  '''
+        question = Question(
+            question=data.get('question', None),
+            answer=data.get('answer', None),
+            category=data.get('category', None),
+            difficulty=data.get('difficulty', None),
+        )
+
+        try:
+            question.insert()
+        except:
+            db.session.rollback()
+            print(sys.exc_info())
+            error = True
+        finally:
+            db.session.close()
+        if not error:
+            return jsonify({
+                "success": True
+            })
+
+        abort(422)
 
   '''
   @TODO: 
