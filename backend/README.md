@@ -211,7 +211,7 @@ python test_flaskr.py
 ```
 
 #### POST '/questions'
-##### method 1
+##### Option 1
 - Create a new question 
 - Request Arguments: 
 	- question
@@ -248,7 +248,7 @@ python test_flaskr.py
 	- InternalServerError 500
 	- Unproccessable 422
 
-##### method 2
+##### Option 2
 - Searches all questions
 - Request Arguments: 
 	- searchTerm
