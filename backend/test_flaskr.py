@@ -69,12 +69,12 @@ class TriviaTestCase(unittest.TestCase):
             question="question1",
             answer="answer1",
             difficulty=1,
-            category="Sport"))
+            category=2))
         db.session.add(Question(
             question="question2",
             answer="answer2",
             difficulty=2,
-            category="Art"))
+            category=1))
         db.session.commit()
 
         result = self.client().get("/questions")
@@ -94,7 +94,7 @@ class TriviaTestCase(unittest.TestCase):
                 question=f"question{i}",
                 answer="answer{i}",
                 difficulty=1,
-                category="Art"))
+                category=1))
         db.session.commit()
 
         result = self.client().get("/questions")
@@ -129,7 +129,7 @@ class TriviaTestCase(unittest.TestCase):
             question="question1",
             answer="answer1",
             difficulty=1,
-            category="Art")
+            category=1)
         db.session.add(question)
         db.session.commit()
 
@@ -153,7 +153,7 @@ class TriviaTestCase(unittest.TestCase):
             question="question1",
             answer="answer1",
             difficulty=1,
-            category="Art"
+            category=1
         ))
 
         self.assertEqual(result.status_code, 200)
@@ -165,12 +165,12 @@ class TriviaTestCase(unittest.TestCase):
             question="question1",
             answer="answer1",
             difficulty=1,
-            category="Art"))
+            category=1))
         db.session.add(Question(
             question="question2",
             answer="answer2",
             difficulty=1,
-            category="Art"))
+            category=1))
         db.session.commit()
 
         result1 = self.client().post("/questions", json=dict(
