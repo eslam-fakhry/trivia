@@ -11,7 +11,7 @@ from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
-FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:3000")
+TRIVIA_FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:3000")
 
 # helpers
 def get_dict_from_categories(categories):
@@ -26,7 +26,7 @@ def create_app(test_config=None):
     migrate = Migrate(app, db)
 
     cors = CORS(app, resources={
-        "/*": {"origins": FRONTEND_ORIGIN}
+        "/*": {"origins": TRIVIA_FRONTEND_ORIGIN}
     })
 
     @app.after_request

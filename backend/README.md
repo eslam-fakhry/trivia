@@ -58,9 +58,10 @@ python seed.py
 ## Frontend origin setup
 note: This setup is important for CORS [more information](https://www.w3.org/wiki/CORS)
 
-The default frontend origin is `http://localhost:3000`. The frontend origin can be overridden by setting the environment 'FRONTEND_ORIGIN`
+The default frontend origin is `http://localhost:3000`. The frontend origin can be overridden by setting the environment 'TRIVIA_FRONTEND_ORIGIN`
+
 ```sh
-export FRONTEND_ORIGIN=<new-front-end-origin>
+export TRIVIA_FRONTEND_ORIGIN=<new-front-end-origin>
 ```
 
 ## Running the server

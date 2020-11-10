@@ -20,7 +20,12 @@ npm install
 
 >_tip_: **npm i** is shorthand for **npm install**
 
-## Required Tasks
+## Backend Url setup
+The default frontend origin is `http://localhost:5000`. The frontend origin can be overridden by setting the environment 'REACT_APP_FRONTEND_URL`
+
+```sh
+export REACT_APP_FRONTEND_URL=<new-front-end-origin>
+```
 
 ## Running Your Frontend in Dev Mode
 
