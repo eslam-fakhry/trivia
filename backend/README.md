@@ -10,7 +10,11 @@ Follow instructions to install the latest version of python for your platform in
 
 #### Virtual Enviornment
 
-We recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organaized. Instructions for setting up a virual enviornment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+```sh
+python -m virtualenv env
+source env/bin/activate
+```
+For more information see [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
 
 #### PIP Dependencies
 
@@ -31,9 +35,17 @@ This will install all of the required packages we selected within the `requireme
 - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server. 
 
 ## Database Setup
-With Postgres running, restore a database using the trivia.psql file provided. From the backend folder in terminal run:
+### Create database
 ```bash
-psql trivia_db < trivia.psql
+createdb trivia_db -U postgres
+```
+### Run migrations
+```sh
+FLASK_APP=flaskr flask db upgrade
+```
+### Run seed
+```sh
+python seed.py
 ```
 
 ## Running the server
