@@ -149,7 +149,6 @@ class TriviaTestCase(unittest.TestCase):
     # create_question
     def test_create_question_adds_new_question(self):
         self.assertEqual(Question.query.count(), 0)
-        # result = self.client().post("/questions", data={
         result = self.client().post("/questions", json=dict(
             question="question1",
             answer="answer1",
@@ -160,6 +159,47 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertEqual(Question.query.count(), 1)
 
+    # search questions
+    def test_search_questions_with_results(self):
+        db.session.add(Question(
+            question="question1",
+            answer="answer1",
+            difficulty=1,
+            category="Art"))
+        db.session.add(Question(
+            question="question2",
+            answer="answer2",
+            difficulty=1,
+            category="Art"))
+        db.session.commit()
+
+        result1 = self.client().post("/questions", json=dict(
+            searchTerm="quest"
+        ))
+
+        body1 = json.loads(result1.data)
+
+        self.assertEqual(result1.status_code, 200)
+        self.assertEqual(len(body1['questions']), 2)
+
+        result2 = self.client().post("/questions", json=dict(
+            searchTerm="question1"
+        ))
+
+        body2 = json.loads(result2.data)
+
+        self.assertEqual(result2.status_code, 200)
+        self.assertEqual(len(body2['questions']), 1)
+
+    def test_search_questions_without_results(self):
+        result = self.client().post("/questions", json=dict(
+            searchTerm="quest"
+        ))
+
+        body = json.loads(result.data)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(len(body['questions']), 0)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
