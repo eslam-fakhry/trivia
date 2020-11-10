@@ -141,7 +141,7 @@ def create_app(test_config=None):
         return jsonify({
             "success": True,
             "questions": formatted_questions,
-            "current_category": category.type,
+            "current_category": category.id,
             "total_questions": len(formatted_questions)
         })
 
@@ -201,4 +201,20 @@ def create_app(test_config=None):
             "success": False,
             "message": "Bad request"
         }), 400
+
+    @app.errorhandler(500)
+    def bad_request(error):
+        return jsonify({
+            "error": 500,
+            "success": False,
+            "message": "Internal server Error"
+        }),500 
+
+    @app.errorhandler(405)
+    def not_allowed_method(error):
+        return jsonify({
+            "error": 405,
+            "success": False,
+            "message": "Method not allowed"
+        }),405 
     return app
