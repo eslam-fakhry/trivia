@@ -27,13 +27,17 @@ def create_app(test_config=None):
                              "true")
         return response
 
+    def get_dict_from_categories(categories):
+        # https://stackoverflow.com/a/1993848
+        return dict(((c.id, c.type) for c in categories))
+
     @app.route('/categories')
     def categories():
-        categories_res = Category.query.all()
-        categories = [c.format() for c in categories_res]
+        categories = Category.query.all()
+
         return jsonify({
             "success": True,
-            "categories": categories
+            "categories": get_dict_from_categories(categories)
         })
 
     @app.route("/questions")
@@ -45,10 +49,9 @@ def create_app(test_config=None):
         # https://docs.sqlalchemy.org/en/13/orm/query.html#sqlalchemy.orm.query.Query.slice
         questions = db.session.query(Question).order_by(Question.id).slice(
             start_question, end_question).all()
-        
+
         categories = Category.query.all()
 
-        formated_categories = [c.type for c in categories]
         if page != 1 and not len(questions):
             abort(404)
         total_questions = Question.query.count()
@@ -58,7 +61,7 @@ def create_app(test_config=None):
             "success": True,
             "questions": formatted_questions,
             "total_questions": total_questions,
-            "categories": formated_categories,
+            "categories": get_dict_from_categories(categories),
             "current_category": None
         })
 

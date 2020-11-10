@@ -46,6 +46,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(body['categories']), 2)
+        self.assertEqual(type(body['categories']), dict)
 
     def test_get_empty_categories_list(self):
         result = self.client().get("/categories")
@@ -84,6 +85,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(len(body['questions']), 2)
         self.assertEqual(body['total_questions'], 2)
         self.assertEqual(body['current_category'], None)
+        self.assertEqual(type(body['categories']), dict)
 
     def test_questions_are_paginated(self):
         db.session.add(Category(type="Art"))
