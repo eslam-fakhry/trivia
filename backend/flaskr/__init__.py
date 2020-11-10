@@ -11,7 +11,7 @@ from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
-FRONTEND_ORIGIN = "http://localhost:3000"
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:3000")
 
 # helpers
 def get_dict_from_categories(categories):
@@ -210,7 +210,7 @@ def create_app(test_config=None):
             "error": 500,
             "success": False,
             "message": "Internal server Error"
-        }),500 
+        }), 500
 
     @app.errorhandler(405)
     def not_allowed_method(error):
@@ -218,5 +218,5 @@ def create_app(test_config=None):
             "error": 405,
             "success": False,
             "message": "Method not allowed"
-        }),405 
+        }), 405
     return app

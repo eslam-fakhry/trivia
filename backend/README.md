@@ -35,6 +35,12 @@ This will install all of the required packages we selected within the `requireme
 - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server. 
 
 ## Database Setup
+### Connection string
+The default database connection string is `postgresql://postgres@localhost:5432/trivia_db`.
+The connection string can be overridden by setting the environment variable `TRIVIA_DATABASE_URL`
+```sh
+export TRIVIA_DATABASE_URL="<new-connection-string>"
+```
 ### Create database
 ```bash
 createdb trivia_db -U postgres
@@ -48,8 +54,16 @@ FLASK_APP=flaskr flask db upgrade
 python seed.py
 ```
 
-## Running the server
 
+## Frontend origin setup
+note: This setup is important for CORS [more information](https://www.w3.org/wiki/CORS)
+
+The default frontend origin is `http://localhost:3000`. The frontend origin can be overridden by setting the environment 'FRONTEND_ORIGIN`
+```sh
+export FRONTEND_ORIGIN=<new-front-end-origin>
+```
+
+## Running the server
 From within the `backend` directory first ensure you are working using your created virtual environment.
 
 To run the server, execute:
