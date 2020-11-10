@@ -2,6 +2,7 @@ import os
 import sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from sqlalchemy import not_, func
 from flask_cors import CORS
 import random
@@ -22,6 +23,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
+    migrate = Migrate(app, db)
 
     cors = CORS(app, resources={
         "/*": {"origins": FRONTEND_ORIGIN}
