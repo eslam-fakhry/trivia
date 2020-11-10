@@ -10,13 +10,22 @@ from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
+FRONTEND_ORIGIN = "http://localhost:3000"
+
+# helpers
+def get_dict_from_categories(categories):
+    # https://stackoverflow.com/a/1993848
+    return dict(((c.id, c.type) for c in categories))
+
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
 
-    cors = CORS(app)
+    cors = CORS(app, resources={
+        "/*": {"origins": FRONTEND_ORIGIN}
+    })
 
     @app.after_request
     def after_request(response):
@@ -27,10 +36,6 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Credentials',
                              "true")
         return response
-
-    def get_dict_from_categories(categories):
-        # https://stackoverflow.com/a/1993848
-        return dict(((c.id, c.type) for c in categories))
 
     @app.route('/categories')
     def categories():
