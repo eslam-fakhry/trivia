@@ -34,11 +34,8 @@ class TriviaTestCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
-    # get_categories 
+    # get_categories
+
     def test_get_categories(self):
         db.session.add(Category(type="Art"))
         db.session.add(Category(type="Sport"))
@@ -63,7 +60,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(result.status_code, 405)
 
-    # get_questions 
+    # get_questions
     def test_get_questions(self):
         db.session.add(Category(type="Art"))
         db.session.add(Category(type="Sport"))
@@ -122,6 +119,31 @@ class TriviaTestCase(unittest.TestCase):
         result = self.client().put("/questions")
 
         self.assertEqual(result.status_code, 405)
+
+    # delete_questions
+    def test_delete_questions(self):
+        db.session.add(Category(type="Art"))
+        question = Question(
+            question="question1",
+            answer="answer1",
+            difficulty=1,
+            category="Art")
+        db.session.add(question)
+        db.session.commit()
+
+        self.assertEqual(Question.query.count(), 1)
+
+        result = self.client().delete(f"/questions/{question.id}")
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(Question.query.count(), 0)
+
+    def test_delete_questions_returns_404_if_does_not_exist(self):
+
+        result = self.client().delete(f"/questions/1")
+
+        self.assertEqual(result.status_code, 404)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

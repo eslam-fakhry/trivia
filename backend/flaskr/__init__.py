@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -61,13 +62,24 @@ def create_app(test_config=None):
             "current_category": None
         })
 
-  '''
-  @TODO: 
-  Create an endpoint to DELETE question using a question ID. 
+    @app.route('/questions/<int:id>', methods=["DELETE"])
+    def delete_question(id):
+        error = False
+        question = Question.query.get_or_404(id)
+        try:
+            question.delete()
+        except:
+            db.session.rollback()
+            print(sys.exc_info())
+            error = True
+        finally:
+            db.session.close()
+        if not error:
+            return jsonify({
+                "success": True
+            })
 
-  TEST: When you click the trash icon next to a question, the question will be removed.
-  This removal will persist in the database and when you refresh the page. 
-  '''
+        abort(422)
 
   '''
   @TODO: 
