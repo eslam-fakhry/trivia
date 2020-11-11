@@ -23,14 +23,14 @@ def main():
 
             for question in data['questions']:
                 question_obj = Question(question=question['question'],
-                                  answer=question["answer"],
-                                  difficulty=question["difficulty"],
-                                  category=question['category'],
-                                  )
+                                        answer=question["answer"],
+                                        difficulty=question["difficulty"],
+                                        category=question['category'],
+                                        )
                 db.session.add(question_obj)
             db.session.commit()
             print("Done seeding.")
-        except:
+        except Exception:
             db.session.rollback()
             print(sys.exc_info())
             print("Error seeding.")

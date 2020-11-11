@@ -15,6 +15,8 @@ TRIVIA_FRONTEND_ORIGIN = os.environ.get(
     "FRONTEND_ORIGIN", "http://localhost:3000")
 
 # helpers
+
+
 def get_dict_from_categories(categories):
     # https://stackoverflow.com/a/1993848
     return dict(((c.id, c.type) for c in categories))
@@ -89,7 +91,7 @@ def create_app(test_config=None):
         question = Question.query.get_or_404(id)
         try:
             question.delete()
-        except:
+        except Exception:
             db.session.rollback()
             print(sys.exc_info())
             error = True
@@ -138,7 +140,7 @@ def create_app(test_config=None):
         if not Category.query.get(category_input):
             return create_custom_bad_request("category")
 
-        if (not difficulty_input) or (difficulty_input < 1) or (difficulty_input > 5):
+        if (not difficulty_input) or (difficulty_input not in range(1, 6)):
             return create_custom_bad_request("difficulty")
 
         question = Question(
@@ -150,7 +152,7 @@ def create_app(test_config=None):
 
         try:
             question.insert()
-        except:
+        except Exception:
             db.session.rollback()
             print(sys.exc_info())
             error = True
