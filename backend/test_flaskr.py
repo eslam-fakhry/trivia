@@ -27,7 +27,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db = SQLAlchemy()
             self.db.init_app(self.app)
             # create all tables
-            self.db.create_all()
+            db.create_all()
 
     def tearDown(self):
         # Clean up test database
@@ -65,6 +65,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_questions(self):
         db.session.add(Category(type="Art"))
         db.session.add(Category(type="Sport"))
+        db.session.commit()
         db.session.add(Question(
             question="question1",
             answer="answer1",
@@ -89,6 +90,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_questions_are_paginated(self):
         db.session.add(Category(type="Art"))
+        db.session.commit()
         for i in range(12):
             db.session.add(Question(
                 question=f"question{i}",
@@ -125,6 +127,7 @@ class TriviaTestCase(unittest.TestCase):
     # delete_questions
     def test_delete_questions(self):
         db.session.add(Category(type="Art"))
+        db.session.commit()
         question = Question(
             question="question1",
             answer="answer1",
@@ -148,6 +151,9 @@ class TriviaTestCase(unittest.TestCase):
 
     # create_question
     def test_create_question_adds_new_question(self):
+        db.session.add(Category(type="Art"))
+        db.session.commit()
+
         self.assertEqual(Question.query.count(), 0)
         result = self.client().post("/questions", json=dict(
             question="question1",
@@ -155,12 +161,13 @@ class TriviaTestCase(unittest.TestCase):
             difficulty=1,
             category=1
         ))
-
         self.assertEqual(result.status_code, 200)
         self.assertEqual(Question.query.count(), 1)
 
     # search questions
     def test_search_questions_with_results(self):
+        db.session.add(Category(type="Art"))
+        db.session.commit()
         db.session.add(Question(
             question="question1",
             answer="answer1",
@@ -205,6 +212,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_questions_by_category(self):
         category = Category(type="Art")
         db.session.add(category)
+        db.session.commit()
         db.session.add(Question(
             question="question1",
             answer="answer1",
@@ -218,7 +226,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(body['questions']), 1)
-        self.assertEqual(body['current_category'], "Art")
+        self.assertEqual(body['current_category'], 1)
 
     def test_get_questions_by_category_without_question(self):
         category = Category(type="Art")
@@ -231,7 +239,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertEqual(len(body['questions']), 0)
-        self.assertEqual(body['current_category'], "Art")
+        self.assertEqual(body['current_category'], 1)
 
     def test_get_questions_by_category_not_found(self):
         result = self.client().get(f"/categories/{1}/questions")
@@ -242,6 +250,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_random_questions_by_category(self):
         category = Category(type="Art")
         db.session.add(category)
+        db.session.commit()
         question = Question(
             question="question1",
             answer="answer1",
@@ -272,6 +281,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_random_questions_by_category_with_no_new_questions(self):
         category = Category(type="Art")
         db.session.add(category)
+        db.session.commit()
         question = Question(
             question="question1",
             answer="answer1",
@@ -296,6 +306,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_random_questions_for_all_categories(self):
         db.session.add(Category(type="Art"))
         db.session.add(Category(type="Science"))
+        db.session.commit()
         db.session.add(Question(
             question="question1",
             answer="answer1",
