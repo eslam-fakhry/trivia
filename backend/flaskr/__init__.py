@@ -180,15 +180,20 @@ def create_app(test_config=None):
     @app.route('/quizzes', methods=["POST"])
     def quizzes():
         category = None
+        quiz_category = None
+        previous_questions = []
 
         data = request.get_json()
 
-        quiz_category = data.get("quiz_category", None)
-        previous_questions = data.get("previous_questions", [])
-        if not quiz_category:
-            abort(400)
+        if data is not None:
+            quiz_category = data.get("quiz_category", None)
+            previous_questions = data.get("previous_questions", [])
 
-        if quiz_category['type'] != "ALL":
+        need_all_categories = not data or \
+            not quiz_category or \
+            quiz_category['type'] == "ALL"
+
+        if not need_all_categories:
             category = Category.query.get_or_404(quiz_category['id'])
 
         query = Question.query
